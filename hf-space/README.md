@@ -1,8 +1,13 @@
 ---
 title: Sportify AI
-app_file: app_gradio.py
+emoji: ⚽
+colorFrom: blue
+colorTo: green
 sdk: gradio
-python_version: 3.11
+sdk_version: "4.11.0"
+python_version: "3.11"
+app_file: app_gradio.py
+pinned: false
 ---
 
 # Sportify AI - Testing Interface
