@@ -1,6 +1,6 @@
 ---
 title: Sportify AI
-emoji: ⚽
+emoji: soccer
 colorFrom: blue
 colorTo: green
 sdk: gradio
