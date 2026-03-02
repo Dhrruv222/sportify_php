@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  server-quality:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci_user:ci_pass@localhost:5432/ci_db
+      DIRECT_URL: postgresql://ci_user:ci_pass@localhost:5432/ci_db
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint server
+        run: npm run lint -w server
+
+      - name: Prisma validate
+        run: npx prisma validate
+        working-directory: server
+
+      - name: Test server
+        run: npm run test -w server

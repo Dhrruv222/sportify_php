@@ -21,10 +21,13 @@ app.use(passport.initialize());
 app.use('/api/v1/auth', authRoutes);
 
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: "ok", message: "Sportify server running 🚀" });
+    res.status(200).json({
+        success: true,
+        data: {
+            status: 'ok',
+            service: 'sportify-server'
+        }
+    });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Running in port ${PORT}`);
-});
+module.exports = app;
