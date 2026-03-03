@@ -75,6 +75,11 @@ model Player {
 
   videos       Video[]
   savedBy      SavedPlayer[]
+  
+  //CV relationships
+  careerHistory  CareerHistory[]
+  achivements    Achievement[]
+  embeddedVideos EmbeddedVideo[]
 }
 
 model Club {
@@ -317,4 +322,39 @@ model NewsArticle {
 
   @@index([locale, publishedAt])
   @@index([isPublished, publishedAt])
+}
+
+//CV extensions
+
+model CareerHistory {
+  id          String    @id @default(uuid())
+  playerId    String
+  player      Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  
+  teamName    String
+  role        String?
+  startDate   DateTime
+  endDate     DateTime?
+  description String?   @db.Text
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  playerId    String
+  player      Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  
+  title       String
+  date        DateTime
+  description String?  @db.Text
+}
+
+model EmbeddedVideo {
+  id          String   @id @default(uuid())
+  playerId    String
+  player      Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  
+  platform    String
+  url         String
+  title       String?
+  createdAt   DateTime @default(now())
 }

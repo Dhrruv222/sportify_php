@@ -1,50 +1,46 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
-const { PrismaClient } = require('@prisma/client');
-const { Pool } = require('pg');
-const { PrismaPg } = require('@prisma/adapter-pg');
+const prisma = require("./db");
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
-
-
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID || 'dummy_id',
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'dummy_secret',
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID || "dummy_id",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "dummy_secret",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
-    try {
-      //Obtain email from Google
+      try {
+        //Obtain email from Google
         const email = profile.emails[0].value;
 
-      //Check if user exists
+        //Check if user exists
         let user = await prisma.user.findUnique({ where: { email } });
 
-      //Create new user
+        //Create new user
         if (!user) {
-        const randomPassword = crypto.randomBytes(16).toString('hex');
-        const hashedPassword = await bcrypt.hash(randomPassword, 10);
+          const randomPassword = crypto.randomBytes(16).toString("hex");
+          const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
-        user = await prisma.user.create({
+          user = await prisma.user.create({
             data: {
-            email: email,
-            password: hashedPassword,
-            role: 'FAN',
-            gdprConsent: true,
-            }
-        });
+              email: email,
+              password: hashedPassword,
+              role: "FAN",
+              gdprConsent: true,
+            },
+          });
         }
 
         return done(null, user);
-    } catch (error) {
+      } catch (error) {
         return done(error, false);
-    }
-    }
-));
+      }
+    },
+  ),
+);
 
 module.exports = passport;
