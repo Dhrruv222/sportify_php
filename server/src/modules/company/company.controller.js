@@ -1,23 +1,8 @@
 const companyService = require('./company.service');
 
-function getOwnerUserId(req) {
-  return req.headers['x-user-id'];
-}
-
-function ensureAuth(req, res) {
-  const ownerUserId = getOwnerUserId(req);
-  if (!ownerUserId) {
-    res.status(401).json({ success: false, error: 'Missing x-user-id header' });
-    return null;
-  }
-
-  return ownerUserId;
-}
-
 async function listEmployees(req, res) {
   try {
-    const ownerUserId = ensureAuth(req, res);
-    if (!ownerUserId) return;
+    const ownerUserId = req.auth.userId;
 
     const result = await companyService.listEmployees({
       ownerUserId,
@@ -33,8 +18,7 @@ async function listEmployees(req, res) {
 
 async function addEmployee(req, res) {
   try {
-    const ownerUserId = ensureAuth(req, res);
-    if (!ownerUserId) return;
+    const ownerUserId = req.auth.userId;
 
     const result = await companyService.addEmployee({
       ownerUserId,
@@ -50,8 +34,7 @@ async function addEmployee(req, res) {
 
 async function removeEmployee(req, res) {
   try {
-    const ownerUserId = ensureAuth(req, res);
-    if (!ownerUserId) return;
+    const ownerUserId = req.auth.userId;
 
     const result = await companyService.removeEmployee({
       ownerUserId,
@@ -66,8 +49,7 @@ async function removeEmployee(req, res) {
 
 async function getStats(req, res) {
   try {
-    const ownerUserId = ensureAuth(req, res);
-    if (!ownerUserId) return;
+    const ownerUserId = req.auth.userId;
 
     const result = await companyService.getStats({ ownerUserId });
     res.status(200).json({ success: true, data: result });
