@@ -6,8 +6,11 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 
+
 //Auth route
 const authRoutes = require('./modules/auth/auth.routes');
+const userRoutes = require('./modules/users/user.routes');
+const profileRoutes = require('./modules/profiles/profile.routes');
 
 const app = express();
 
@@ -19,6 +22,8 @@ app.use(passport.initialize());
 
 // Routes API
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/profile', profileRoutes);
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({
