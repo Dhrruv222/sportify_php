@@ -27,6 +27,7 @@ test('handoff stubs return expected shapes', async () => {
 
   const score = await computeScoutScore('player_1', { pace: 80 });
   assert.equal(typeof score.score, 'number');
+  assert.equal(typeof score.breakdown.technical, 'number');
 
   const articles = await getArticles({ locale: 'de', page: 1, limit: 10 });
   assert.equal(Array.isArray(articles), true);

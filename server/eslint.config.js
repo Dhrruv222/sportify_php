@@ -13,6 +13,7 @@ module.exports = [
         module: 'readonly',
         require: 'readonly',
         __dirname: 'readonly',
+        fetch: 'readonly',
       },
     },
     rules: {
