@@ -8,6 +8,7 @@ const passport = require('passport');
 
 //Auth route
 const authRoutes = require('./modules/auth/auth.routes');
+const fitpassRoutes = require('./modules/fitpass/fitpass.routes');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(passport.initialize());
 
 // Routes API
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/fitpass', fitpassRoutes);
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({
