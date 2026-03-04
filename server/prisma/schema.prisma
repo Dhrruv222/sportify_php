@@ -214,6 +214,8 @@ model Follows {
 
   follower   User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
   followed   User @relation("UserFollowers", fields: [followedId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId,followedId])
 }
 
 model Message {
@@ -235,6 +237,8 @@ model SavedPlayer {
 
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   player    Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId,playerId])
 }
 
 //CV extensions
