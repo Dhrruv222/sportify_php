@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const { validateEnv } = require('./config/env');
 
 
 //Routes
@@ -44,6 +45,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/health/ready', (req, res) => {
+    const envStatus = validateEnv();
     const checks = {
         database: {
             configured: Boolean(process.env.DATABASE_URL || process.env.DIRECT_URL),
@@ -57,11 +59,18 @@ app.get('/api/health/ready', (req, res) => {
         queue: {
             mode: process.env.REDIS_URL ? 'bullmq' : 'inline',
         },
+        envValidation: {
+            ok: envStatus.ok,
+            errors: envStatus.errors,
+            warnings: envStatus.warnings,
+            nodeEnv: envStatus.nodeEnv,
+        },
     };
 
-    const status = checks.database.configured ? 'ready' : 'degraded';
+    const status = envStatus.ok ? 'ready' : 'degraded';
+    const responseCode = envStatus.ok || envStatus.nodeEnv !== 'production' ? 200 : 503;
 
-    res.status(200).json({
+    res.status(responseCode).json({
         success: true,
         data: {
             status,
