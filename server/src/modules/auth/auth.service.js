@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// 1. CORRECCIÓN ARQUITECTÓNICA: Usamos el Singleton de Prisma
-const prisma = require('../../config/db'); 
+const prisma = require('../../config/db');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
