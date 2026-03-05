@@ -43,4 +43,32 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+app.get('/api/health/ready', (req, res) => {
+    const checks = {
+        database: {
+            configured: Boolean(process.env.DATABASE_URL || process.env.DIRECT_URL),
+        },
+        jwt: {
+            configured: Boolean(process.env.JWT_SECRET && process.env.JWT_REFRESH_SECRET),
+        },
+        aiService: {
+            configured: Boolean(process.env.AI_SERVICE_URL),
+        },
+        queue: {
+            mode: process.env.REDIS_URL ? 'bullmq' : 'inline',
+        },
+    };
+
+    const status = checks.database.configured ? 'ready' : 'degraded';
+
+    res.status(200).json({
+        success: true,
+        data: {
+            status,
+            service: 'sportify-server',
+            checks,
+        },
+    });
+});
+
 module.exports = app;
