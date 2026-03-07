@@ -7,7 +7,7 @@ const { getProfile, updateProfile } = require('./profile.controller');
 // Require authentication for all profile routes
 router.use(authorize([]));
 
-router.get('/show', getProfile);
-router.put('/update', updateProfile);
+router.get('/', getProfile);
+router.put('/me', updateProfile);
 
 module.exports = router;
