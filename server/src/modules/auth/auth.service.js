@@ -72,7 +72,7 @@ const login = async (credentials) => {
         throw new Error("Invalid Credentials");
     }
 
-    // Generar tokens
+    // make tokens
     const accessToken = jwt.sign(
         { userId: user.id, role: user.role },
         JWT_SECRET,
