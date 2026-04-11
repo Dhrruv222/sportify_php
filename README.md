@@ -1,103 +1,90 @@
-# Sportify_1
+# Sportify PHP Monorepo
 
-Monorepo for Sportify MVP with web (`client`), backend (`server`), mobile (`mobile`), and AI microservice (`ai-service`).
+Sportify monorepo with web, mobile, AI service, and a Laravel 11 backend migrated from Node.js.
 
-## Current Implementation Status (Done)
+## Services
 
-### Dev 2 Progress Snapshot (Latest)
-- FIT-Pass module implemented (`plans`, `subscribe`, `me/qr`, `checkin`) with tests.
-- Company HR module implemented (`employees` list/add/remove, `stats`) with tests.
-- News module implemented with internal ingest, queue enqueue, queue status/retry, and scheduler tests.
-- AI scoring integrated (`server` -> `ai-service`) with fallback behavior and tests.
-- Startup environment guardrails added (`server/src/config/env.js`) and validated in tests.
-- Health checks expanded with readiness endpoint (`/api/health/ready`).
-- CI extended to include `ai-service` syntax + tests.
+- `backend/` Laravel 11 API (PHP 8.3+, PostgreSQL, Redis)
+- `client/` Next.js frontend
+- `mobile/` Flutter app
+- `ai-service/` FastAPI AI scoring service
+- `server/` legacy Node.js backend kept for rollback compatibility
 
-### 1) Environment & Tooling
-- Flutter installed and configured globally on Windows.
-- `flutter doctor -v` completed with no issues.
-- Runtime pin files added:
-  - `.nvmrc` → `20`
-  - `.python-version` → `3.11`
-- Docker Compose scaffold added for local infra.
+## Backend API Status
 
-### 2) Git/GitHub Setup
-- Repository initialized and pushed to GitHub.
-- Remote configured: `origin -> https://github.com/Dhrruv222/Sportify_1.git`
-- `main` branch active and tracking remote.
-- Nested `client` gitlink/submodule issue fixed so `client` files are now tracked normally.
+- Endpoint parity completed: 52/52 API endpoints
+- Data parity completed: 25 models and tables
+- Auth parity completed: JWT role guard, company auth/roles, internal API key
+- Dockerized backend available on port `8000`
 
-### 3) Prisma + Supabase (Server)
-- Prisma v7 config aligned to `prisma.config.ts` datasource usage.
-- `schema.prisma` updated to Prisma v7-compatible datasource format (no `url`/`directUrl` inside schema datasource block).
-- Connection string troubleshooting completed (URL encoding and pooler format issues addressed).
-- Migration successfully created and applied:
-  - `server/prisma/migrations/20260225204740_init_supabase_cloud/migration.sql`
-- Prisma Studio verified as runnable.
+Reference docs:
 
-### 4) AI Service Scaffold (FastAPI)
-- `ai-service` folder created.
-- Python virtual environment created under `ai-service/venv`.
-- Dependencies installed in venv: `fastapi`, `uvicorn`, `openai`, `requests`.
-- Clean `ai-service/requirements.txt` generated from local venv.
-- Health endpoint scaffold added in `ai-service/main.py`.
+- `docs/ENDPOINT_PARITY_MATRIX.md`
+- `docs/DATA_PARITY_MATRIX.md`
+- `docs/ENV_MIGRATION_MATRIX.md`
+- `docs/MIGRATION_REPORT.md`
+- `docs/TEST_VERIFICATION_REPORT.md`
+- `docs/DEPLOYMENT_RUNBOOK_PHP.md`
+- `docs/ROLLBACK_RUNBOOK.md`
 
-### 5) Environment Templates
-- Env template(s) started for AI service:
-  - `ai-service/.env.example`
-- Backup env workflow used during DB URL fixes (`.env.bak`) and excluded from commits via `.gitignore` updates.
+## Quick Start (Docker)
 
-### 6) Handoff/Scaffolding Files
-- Backend service scaffolding added under:
-  - `server/src/services/index.ts`
-  - `server/src/services/handoffs.ts`
+From repo root:
 
----
+```bash
+docker compose up --build -d
+docker compose exec backend php artisan migrate --force
+docker compose exec backend php artisan db:seed --force
+```
 
-## Repository Structure
+Health checks:
 
-- `client/` → Next.js frontend
-- `server/` → Node.js + Prisma backend
-- `mobile/` → Flutter app
-- `ai-service/` → FastAPI microservice
-- `docker-compose.yml` → local service orchestration scaffold
+```bash
+curl http://127.0.0.1:8000/api/health
+curl http://127.0.0.1:8000/api/health/ready
+```
 
----
+Note for Windows: prefer `127.0.0.1` instead of `localhost` for backend smoke requests.
 
-## Verified Commands (So Far)
+## Backend Development (Without Docker)
 
-### Flutter
-- `flutter --version`
-- `flutter doctor -v`
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+php artisan serve --port=8000
+```
 
-### Prisma
-- `npx prisma validate`
-- `npx prisma migrate dev --name init_supabase_cloud`
-- `npx prisma studio`
+## Backend Test and Quality Commands
 
-### AI Service
-- `./venv/Scripts/python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000` (PowerShell equivalent path used on Windows)
+```bash
+cd backend
+php artisan test
+./vendor/bin/phpstan analyse
+./vendor/bin/pint --test
+```
 
----
+## Repository Layout
 
-## In Progress / Next Roadmap Focus (Dev 2)
+```text
+backend/   Laravel 11 API
+client/    Next.js app
+mobile/    Flutter app
+ai-service/ FastAPI service
+server/    Legacy Node.js backend (fallback)
+docs/      Migration and ops documentation
+scripts/   Smoke and ops scripts
+```
 
-1. Continue infra readiness tasks that do not require AWS/Stripe/Firebase rollout.
-2. Keep backend quality gates green while integrating parallel Dev1 merges.
-3. Expand deployment playbook from staging to production handoff.
+## Environment Notes
 
-### Dev 2 Ops Docs
-- Runbook: `server/docs/dev2-operations-runbook.md`
-- Failure Matrix: `server/docs/dev2-failure-matrix.md`
-- Release Checklist: `server/docs/dev2-release-checklist.md`
-- Deployment Playbook: `server/docs/dev2-deployment-playbook.md`
+- Keep secrets out of git; use local `.env` files.
+- Core backend variables are documented in `docs/ENV_MIGRATION_MATRIX.md`.
+- If Redis is not configured, news queue endpoints run in inline fallback mode.
 
-### Dev 2 Smoke Command
-- `npm run ops:readiness-smoke -- --base-url http://localhost:3000`
+## Rollback Strategy
 
----
-
-## Notes
-- Keep secrets out of git; use `.env` locally and `.env.example` for shared templates.
-- Use encoded passwords in Postgres URLs when special characters are present.
-- Keep migration announcements coordinated before applying shared/staging DB changes.
+Node backend is preserved under `server/` and can be redeployed if needed. See `docs/ROLLBACK_RUNBOOK.md`.
