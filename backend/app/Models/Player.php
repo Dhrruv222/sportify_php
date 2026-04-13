@@ -27,7 +27,8 @@ class Player extends Model
     public function agent(): BelongsTo { return $this->belongsTo(Agent::class); }
     public function videos(): HasMany { return $this->hasMany(Video::class); }
     public function savedBy(): HasMany { return $this->hasMany(SavedPlayer::class); }
-    public function careerHistory(): HasMany { return $this->hasMany(CareerHistory::class); }
+    public function careerHistories(): HasMany { return $this->hasMany(CareerHistory::class); }
+    public function careerHistory(): HasMany { return $this->careerHistories(); }
     public function achievements(): HasMany { return $this->hasMany(Achievement::class); }
     public function embeddedVideos(): HasMany { return $this->hasMany(EmbeddedVideo::class); }
 }
