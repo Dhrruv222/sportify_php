@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sportify AI - Global Football Intelligence & Club Matchmaking Engine
 
 ## Quick Start

@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  server-quality:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci_user:ci_pass@localhost:5432/ci_db
+      DIRECT_URL: postgresql://ci_user:ci_pass@localhost:5432/ci_db
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint server
+        run: npm run lint -w server
+
+      - name: Prisma validate
+        run: npx prisma validate
+        working-directory: server
+
+      - name: Test server
+        run: npm run test -w server
+
+  ai-service-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: ai-service/requirements.txt
+
+      - name: Install ai-service dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ai-service/requirements.txt
+
+      - name: Validate ai-service syntax
+        run: python -m py_compile ai-service/main.py
+
+      - name: Test ai-service
+        run: python -m pytest ai-service/tests -q

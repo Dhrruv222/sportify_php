@@ -1,0 +1,71 @@
+{
+    "name": "sportify/backend",
+    "type": "project",
+    "description": "Sportify Laravel 11 backend - migrated from Node.js",
+    "keywords": ["sportify", "laravel", "api"],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "laravel/framework": "^11.0",
+        "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.0",
+        "firebase/php-jwt": "^6.10",
+        "ramsey/uuid": "^4.7",
+        "predis/predis": "^2.2"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pint": "^1.18",
+        "larastan/larastan": "^2.9",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "dev": "@php artisan serve",
+        "test": "@php artisan test",
+        "lint": "pint",
+        "analyse": "phpstan analyse",
+        "migrate": "@php artisan migrate",
+        "seed": "@php artisan db:seed",
+        "fresh": "@php artisan migrate:fresh --seed"
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        },
+        "audit": {
+            "abandoned": "report",
+            "block-insecure": false
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

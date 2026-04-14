@@ -1,0 +1,32 @@
+node_modules
+.next
+dist
+.env
+.env.*
+.env.local
+*.log
+.venv
+venv/
+__pycache__/
+*.pyc
+
+# Laravel backend runtime/cache artifacts
+backend/bootstrap/cache/*
+!backend/bootstrap/cache/.gitignore
+backend/storage/*.key
+backend/storage/logs/*
+!backend/storage/logs/.gitignore
+backend/storage/framework/cache/*
+!backend/storage/framework/cache/.gitignore
+backend/storage/framework/sessions/*
+!backend/storage/framework/sessions/.gitignore
+backend/storage/framework/views/*
+!backend/storage/framework/views/.gitignore
+backend/supervisord.pid
+
+# Flutter / Android build caches
+**/.dart_tool/
+**/.gradle/
+
+# Office docs (keep roadmaps out of git)
+*.docx

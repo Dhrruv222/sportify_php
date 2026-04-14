@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: sportify
+      POSTGRES_PASSWORD: sportify
+      POSTGRES_DB: sportify
+    ports:
+      - "5434:5432"
+    volumes:
+      - sportify_pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - sportify_redisdata:/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: base64:GENERATE_WITH_PHP_ARTISAN_KEY_GENERATE
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: sportify
+      DB_USERNAME: sportify
+      DB_PASSWORD: sportify
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: dev-jwt-secret-changeme
+      JWT_REFRESH_SECRET: dev-jwt-refresh-secret-changeme
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/var/www/html
+      - /var/www/html/vendor
+
+volumes:
+  sportify_pgdata:
+  sportify_redisdata:
+
