@@ -8,6 +8,7 @@ import RecommendationsTab from './components/tabs/RecommendationsTab';
 import PlayersTab from './components/tabs/PlayersTab';
 import ClubsTab from './components/tabs/ClubsTab';
 import NewsTab from './components/tabs/NewsTab';
+import AnalyticsTab from './components/tabs/AnalyticsTab';
 import DocsTab from './components/tabs/DocsTab';
 
 function App() {
@@ -42,6 +43,8 @@ function App() {
         return <ClubsTab apiUrl={apiUrl} />;
       case 'news':
         return <NewsTab apiUrl={apiUrl} />;
+      case 'analytics':
+        return <AnalyticsTab apiUrl={apiUrl} />;
       case 'docs':
         return <DocsTab />;
       default:

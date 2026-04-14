@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import VisualizationDashboard from '../VisualizationDashboard';
+import ChatbotWidget from '../ChatbotWidget';
 import './RecommendationsTab.css';
 
 export default function RecommendationsTab({ apiUrl }) {
@@ -155,6 +157,23 @@ export default function RecommendationsTab({ apiUrl }) {
           <p className="empty">Click generate to see recommendations</p>
         )}
       </div>
+
+      {/* Visualization Dashboard */}
+      {recommendations.length > 0 && (
+        <VisualizationDashboard
+          apiUrl={apiUrl}
+          data={recommendations}
+        />
+      )}
+
+      {/* Chatbot Widget */}
+      <ChatbotWidget
+        apiUrl={apiUrl}
+        analysisData={{
+          recommendations: recommendations,
+          selected_club: selectedClub
+        }}
+      />
     </div>
   );
 }

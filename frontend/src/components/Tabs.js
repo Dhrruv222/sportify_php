@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, Users, Building2, Newspaper, BookOpen } from 'lucide-react';
+import { Target, Users, Building2, Newspaper, BarChart3, BookOpen } from 'lucide-react';
 import './Tabs.css';
 
 export default function Tabs({ activeTab, onTabChange }) {
@@ -8,6 +8,7 @@ export default function Tabs({ activeTab, onTabChange }) {
     { id: 'players', label: 'Players', icon: Users },
     { id: 'clubs', label: 'Clubs', icon: Building2 },
     { id: 'news', label: 'News', icon: Newspaper },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'docs', label: 'Docs', icon: BookOpen }
   ];
 
