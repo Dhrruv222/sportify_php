@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Jobs\IngestNews;
 use App\Models\NewsArticle;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -75,24 +76,12 @@ class NewsController extends Controller
     public function ingest(Request $request): JsonResponse
     {
         try {
-            $articles = $request->input('articles', []);
-            $created = 0;
+            $locale = $request->input('locale', 'en');
+            $limit = $request->input('limit', 10);
 
-            foreach ($articles as $data) {
-                NewsArticle::create([
-                    'title' => $data['title'],
-                    'summary' => $data['summary'] ?? null,
-                    'content' => $data['content'] ?? null,
-                    'source' => $data['source'] ?? null,
-                    'source_url' => $data['sourceUrl'] ?? null,
-                    'locale' => $data['locale'] ?? 'en',
-                    'published_at' => now(),
-                    'is_published' => true,
-                ]);
-                $created++;
-            }
+            IngestNews::dispatch($locale, $limit);
 
-            return response()->json(['success' => true, 'data' => ['ingested' => $created]]);
+            return response()->json(['success' => true, 'message' => 'News ingestion job dispatched']);
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }

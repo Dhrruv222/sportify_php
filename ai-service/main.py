@@ -101,20 +101,28 @@ def compute_scout_score_with_openai(stats: Dict[str, Any]) -> ScoutScoreResponse
     return parse_ai_json(raw_text)
 
 
-@app.post("/internal/scout-score", response_model=ScoutScoreResponse)
-def internal_scout_score(
-    payload: ScoutScoreRequest,
-    x_internal_api_key: str | None = Header(default=None),
-) -> ScoutScoreResponse:
-    required_key = os.getenv("INTERNAL_API_KEY")
-    if required_key and x_internal_api_key != required_key:
-        raise HTTPException(status_code=401, detail="Invalid internal API key")
-
-    fallback_enabled = os.getenv("AI_FALLBACK_ENABLED", "true").lower() == "true"
-
-    try:
-        return compute_scout_score_with_openai(payload.stats)
-    except Exception:
-        if fallback_enabled:
-            return fallback_scout_score(payload.stats)
-        raise HTTPException(status_code=502, detail="AI scoring unavailable")
+@app.get("/api/v1/news/feed")
+def news_feed(locale: str = "en", limit: int = 10):
+    # Mock news feed - in production, integrate with NewsAPI or similar
+    mock_articles = [
+        {
+            "title": "Transfer News: Star Player Signs with New Club",
+            "summary": "Breaking news on the latest football transfer.",
+            "content": "Detailed content about the transfer...",
+            "source": "Sportify News",
+            "sourceUrl": "https://example.com/transfer-news",
+            "locale": locale,
+            "publishedAt": "2024-10-01T10:00:00Z"
+        },
+        {
+            "title": "Match Report: Exciting Draw in Premier League",
+            "summary": "Summary of the recent match.",
+            "content": "Full match report...",
+            "source": "Sportify News",
+            "sourceUrl": "https://example.com/match-report",
+            "locale": locale,
+            "publishedAt": "2024-10-02T12:00:00Z"
+        }
+    ]
+    
+    return {"data": mock_articles[:limit]}

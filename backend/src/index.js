@@ -36,7 +36,7 @@ app.use(morgan('combined', {
 }));
 
 // Health check
-app.use('/health', healthRoutes);
+app.use('/api/health', healthRoutes);
 
 // Mock API Routes (for testing without database)
 app.get('/api/clubs', (req, res) => {
