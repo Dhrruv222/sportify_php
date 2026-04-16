@@ -5,7 +5,7 @@
     "keywords": ["sportify", "laravel", "api"],
     "license": "proprietary",
     "require": {
-        "php": "^8.3",
+        "php": "^8.2",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.0",

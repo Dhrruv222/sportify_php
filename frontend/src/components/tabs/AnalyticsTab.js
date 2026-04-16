@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import VisualizationDashboard from './VisualizationDashboard';
-import ChatbotWidget from './ChatbotWidget';
+import VisualizationDashboard from '../VisualizationDashboard';
+import ChatbotWidget from '../ChatbotWidget';
 import './AnalyticsTab.css';
 
 /**
