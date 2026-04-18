@@ -101,9 +101,9 @@ def compute_scout_score_with_openai(stats: Dict[str, Any]) -> ScoutScoreResponse
     return parse_ai_json(raw_text)
 
 
-@app.get("/api/v1/news/feed")
+@app.get("/internal/news/feed")
 def news_feed(locale: str = "en", limit: int = 10):
-    # Mock news feed - in production, integrate with NewsAPI or similar
+    # Internal AI news feed endpoint - not part of the public Laravel API surface
     mock_articles = [
         {
             "title": "Transfer News: Star Player Signs with New Club",

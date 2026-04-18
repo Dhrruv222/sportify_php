@@ -47,7 +47,7 @@ SERVICES_AI_URL=http://your-ai-service-url
 ## API Endpoints
 - `GET /health` - Health check
 - `POST /internal/scout-score` - Player scoring (internal)
-- `GET /api/v1/news/feed` - News feed data
+- `GET /internal/news/feed` - Internal AI news feed data (used by back-end ingestion only)
 
 ## Security
 - Use HTTPS in production

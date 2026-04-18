@@ -31,7 +31,7 @@ class IngestNews implements ShouldQueue
             return;
         }
 
-        $response = Http::timeout(30)->get("{$aiUrl}/api/v1/news/feed", [
+        $response = Http::timeout(30)->get("{$aiUrl}/internal/news/feed", [
             'locale' => $this->locale,
             'limit' => $this->limit,
         ]);
