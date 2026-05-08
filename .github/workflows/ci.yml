@@ -1,4 +1,16 @@
-server-quality:
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  server-quality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,3 +35,24 @@ server-quality:
       - name: Test server
         run: npm test
         working-directory: backend
+
+  ai-service-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: backend
+
+      - name: Validate AI App Setup
+        run: node scripts/setupApp.js 
+        working-directory: backend
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
