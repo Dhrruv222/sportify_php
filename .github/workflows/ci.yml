@@ -19,15 +19,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '24' # Updated to avoid deprecation
+          node-version: '24'
           cache: npm
+          # Tell npm to look for package.json inside the backend folder
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
         run: npm install
+        working-directory: backend
 
-      # We use 'npm test' because your package.json has a test script defined
       - name: Test server
         run: npm test
+        working-directory: backend
 
   ai-service-quality:
     runs-on: ubuntu-latest
@@ -42,9 +45,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: backend
 
-      # This triggers your ingestNews.js to ensure the AI logic works
+      # FIXED PATH: backend/scripts/setupApp.js (or ingestNews if you have it)
       - name: Validate AI Ingestion
-        run: node scripts/ingestNews.js
+        run: node scripts/setupApp.js 
+        working-directory: backend
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
