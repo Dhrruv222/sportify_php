@@ -21,15 +21,15 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-          # Tell npm to look for package.json inside the backend folder
           cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
         run: npm install
         working-directory: backend
 
+      # Using npx avoids the "Permission Denied" issue with node_modules/.bin
       - name: Test server
-        run: npm test
+        run: npx jest --coverage
         working-directory: backend
 
   ai-service-quality:
@@ -47,8 +47,8 @@ jobs:
         run: npm install
         working-directory: backend
 
-      # FIXED PATH: backend/scripts/setupApp.js (or ingestNews if you have it)
-      - name: Validate AI Ingestion
+      # Points to the script seen in your screenshot
+      - name: Validate AI App Setup
         run: node scripts/setupApp.js 
         working-directory: backend
         env:
