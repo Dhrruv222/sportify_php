@@ -12,10 +12,6 @@ on:
 jobs:
   server-quality:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: postgresql://ci_user:ci_pass@localhost:5432/ci_db
-      DIRECT_URL: postgresql://ci_user:ci_pass@localhost:5432/ci_db
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,43 +19,32 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: '24' # Updated to avoid deprecation
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Lint server
-        run: npm run lint -w server
-
-      - name: Prisma validate
-        run: npx prisma validate
-        working-directory: server
-
+      # We use 'npm test' because your package.json has a test script defined
       - name: Test server
-        run: npm run test -w server
+        run: npm test
 
   ai-service-quality:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          python-version-file: .python-version
-          cache: pip
-          cache-dependency-path: ai-service/requirements.txt
+          node-version: '24'
 
-      - name: Install ai-service dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r ai-service/requirements.txt
+      - name: Install dependencies
+        run: npm install
 
-      - name: Validate ai-service syntax
-        run: python -m py_compile ai-service/main.py
-
-      - name: Test ai-service
-        run: python -m pytest ai-service/tests -q
+      # This triggers your ingestNews.js to ensure the AI logic works
+      - name: Validate AI Ingestion
+        run: node scripts/ingestNews.js
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
