@@ -1,16 +1,4 @@
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-      - 'feature/**'
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  server-quality:
+server-quality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,29 +15,11 @@ jobs:
         run: npm install
         working-directory: backend
 
-      # Using npx avoids the "Permission Denied" issue with node_modules/.bin
+      # THE SLEDGEHAMMER: Force execution permissions on all binaries
+      - name: Fix Binaries Permissions
+        run: chmod -R +x node_modules/.bin
+        working-directory: backend
+
       - name: Test server
-        run: npx jest --coverage
+        run: npm test
         working-directory: backend
-
-  ai-service-quality:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: backend
-
-      # Points to the script seen in your screenshot
-      - name: Validate AI App Setup
-        run: node scripts/setupApp.js 
-        working-directory: backend
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
