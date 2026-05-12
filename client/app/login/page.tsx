@@ -14,8 +14,8 @@ interface LoginResponse {
       id: string;
       email: string;
       role: string;
-      firstName: string;
-      lastName: string;
+      firstName?: string;
+      lastName?: string;
     };
   };
 }
@@ -48,7 +48,7 @@ export default function LoginPage() {
     setMounted(true);
     // Redirect if already logged in
     if (typeof window !== "undefined" && localStorage.getItem("token")) {
-      router.replace("/");
+      router.replace("/profile");
     }
   }, [router]);
 
@@ -65,9 +65,9 @@ export default function LoginPage() {
 
       if (res.status === "success" && res.data?.accessToken) {
         localStorage.setItem("token", res.data.accessToken);
-        router.push("/");
+        router.push("/profile");
       } else {
-        setError("Unexpected response from server. Please try again.");
+        setError("Invalid email or password. Please try again.");
       }
     } catch (err: unknown) {
       setError(
@@ -372,7 +372,7 @@ export default function LoginPage() {
               href="/register"
               className="flex h-12 w-full items-center justify-center rounded-full border border-white/15 text-sm font-semibold text-white transition-all hover:border-white/30 hover:bg-white/5"
             >
-              Create an account
+              Register
             </Link>
           </div>
 

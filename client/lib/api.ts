@@ -10,6 +10,8 @@ import type {
   FitpassQr,
   PaginatedResponse,
   Profile,
+  CareerHistory,
+  Achievement,
 } from "@/types";
 
 if (!process.env.NEXT_PUBLIC_API_BASE_URL) {
@@ -97,6 +99,34 @@ export async function getProfile(): Promise<Profile> {
     // profile fields overwrite defaults (firstName, lastName, etc.)
     ...profile,
   } as Profile;
+}
+
+interface AuthUser {
+  id: string;
+  email: string;
+  role: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface AuthResponse {
+  status: string;
+  data: {
+    accessToken: string;
+    user: AuthUser;
+  };
+}
+
+export async function registerUser(payload: {
+  email: string;
+  password: string;
+  gdprConsent: boolean;
+  role?: string;
+}): Promise<AuthResponse> {
+  return apiFetch<AuthResponse>("/api/v1/auth/register", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 /* ── getSocialFeed ─────────────────────────────────
@@ -193,5 +223,107 @@ export async function getFitpassQr(): Promise<FitpassQr> {
   };
 }
 
+/* ── updateProfile ─────────────────────────────────
+   Updates profile information (firstName, lastName, position, bio, etc)
+   ────────────────────────────────────────────────── */
+export async function updateProfile(
+  profileData: Partial<Profile>
+): Promise<Profile> {
+  const raw = await apiFetch<ProfileRaw>("/api/v1/profile/me", {
+    method: "PUT",
+    body: JSON.stringify(profileData),
+  });
+  const { user, profile } = raw.data;
+  return {
+    id: user.id,
+    userId: user.id,
+    role: user.role,
+    avatarUrl: user.profilePhoto ?? null,
+    coverPhotoUrl: user.coverPhoto ?? null,
+    firstName: "",
+    lastName: "",
+    position: null,
+    location: null,
+    dominantFoot: null,
+    height: null,
+    weight: null,
+    playingStyle: null,
+    skills: null,
+    bio: null,
+    createdAt: "",
+    updatedAt: "",
+    careerHistories: [],
+    achievements: [],
+    ...profile,
+  } as Profile;
+}
+
+/* ── updatePhotos ──────────────────────────────────
+   Update profile and cover photos
+   ────────────────────────────────────────────────── */
+interface PhotoUpdate {
+  profilePhoto?: string | null;
+  coverPhoto?: string | null;
+}
+
+export async function updatePhotos(
+  photos: PhotoUpdate
+): Promise<{ message: string }> {
+  return apiFetch("/api/v1/users/photos", {
+    method: "PUT",
+    body: JSON.stringify(photos),
+  });
+}
+
+/* ── addCareerHistory ──────────────────────────────
+   Add a career entry (club, position, dates)
+   ────────────────────────────────────────────────── */
+export async function addCareerHistory(
+  careerData: Omit<CareerHistory, "id">
+): Promise<CareerHistory> {
+  const response = await apiFetch<{ status: string; data: CareerHistory }>(
+    "/api/v1/profile/me/career",
+    {
+      method: "POST",
+      body: JSON.stringify(careerData),
+    }
+  );
+  return response.data;
+}
+
+/* ── updateCareerHistory ───────────────────────────
+   Update an existing career entry
+   ────────────────────────────────────────────────── */
+export async function updateCareerHistory(
+  id: string,
+  careerData: Partial<CareerHistory>
+): Promise<CareerHistory> {
+  const response = await apiFetch<{ status: string; data: CareerHistory }>(
+    `/api/v1/profile/me/career/${id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(careerData),
+    }
+  );
+  return response.data;
+}
+
+/* ── getAvatarUploadUrl ────────────────────────────
+   Get signed upload URL for profile avatar
+   ────────────────────────────────────────────────── */
+export async function getAvatarUploadUrl(): Promise<{
+  uploadUrl: string;
+  photoUrl: string;
+}> {
+  const response = await apiFetch<{
+    status: string;
+    data: { uploadUrl: string; photoUrl: string };
+  }>("/api/v1/profile/me/avatar", {
+    method: "POST",
+  });
+  return response.data;
+}
+
+export type { CareerHistory, Achievement, Profile };
 export { apiFetch };
 
