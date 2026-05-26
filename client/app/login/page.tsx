@@ -80,7 +80,19 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black">
-      {/* ── Ambient gradient background ── */}
+      {/* ── Online video background (YouTube embed) ── */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <iframe
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full"
+          src="https://www.youtube.com/embed/EhK4exhhlU4?autoplay=1&mute=1&loop=1&playlist=EhK4exhhlU4&controls=0&rel=0&modestbranding=1&playsinline=1"
+          title="Sportify hero background"
+          allow="autoplay; fullscreen; picture-in-picture"
+          frameBorder="0"
+        />
+      </div>
+
+      {/* ── Ambient gradient overlay ── */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
