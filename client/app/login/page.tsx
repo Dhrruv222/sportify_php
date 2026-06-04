@@ -85,7 +85,7 @@ export default function LoginPage() {
         <iframe
           aria-hidden="true"
           className="absolute inset-0 h-full w-full"
-          src="https://www.youtube.com/embed/EhK4exhhlU4?autoplay=1&mute=1&loop=1&playlist=EhK4exhhlU4&controls=0&rel=0&modestbranding=1&playsinline=1"
+          src="https://www.youtube.com/embed/EhK4exhhlU4?autoplay=1&mute=1&loop=1&playlist=EhK4exhhlU4&controls=0&rel=0&modestbranding=1&playsinline=1&end=8"
           title="Sportify hero background"
           allow="autoplay; fullscreen; picture-in-picture"
           frameBorder="0"
